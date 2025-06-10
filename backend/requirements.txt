@@ -6,3 +6,5 @@ pyjwt
 passlib[bcrypt]
 motor
 python-dotenv
+groq
+python-multipart

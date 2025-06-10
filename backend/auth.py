@@ -10,7 +10,7 @@ import os
 router = APIRouter()
 
 # JWT Config
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your_secret_key")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "M9hXWnBFLcOE0rUsk8pHvE0z0e_zX_UZK-smpLq_9iU")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -55,7 +55,7 @@ async def authenticate_user(username: str, password: str):
     return user
 
 # 🔹 Register
-@router.post("/register/")
+@router.post("/register")
 async def register_user(user: User):
     existing_user = await users_collection.find_one({"username": user.username})
     if existing_user:
@@ -67,7 +67,7 @@ async def register_user(user: User):
     return {"message": "User registered successfully"}
 
 # 🔹 Login
-@router.post("/login/")
+@router.post("/login")
 async def login_user(user: User):
     db_user = await users_collection.find_one({"username": user.username})
     if not db_user or not pwd_context.verify(user.password, db_user["password"]):

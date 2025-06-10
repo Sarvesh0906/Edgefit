@@ -20,6 +20,7 @@ const config = {
     },
     extend: {
       colors: {
+        // Existing color tokens (keep these)
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -53,18 +54,19 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        green: {
-          50: "#f0fdf4",
-          100: "#dcfce7",
-          200: "#bbf7d0",
-          300: "#86efac",
-          400: "#4ade80",
-          500: "#22c55e",
-          600: "#16a34a",
-          700: "#15803d",
-          800: "#166534",
-          900: "#14532d",
-          950: "#052e16",
+        // Custom green-based palette
+        brand: {
+          green: "#04BF62",      // Main brand color: headers, primary buttons
+          accent: "#3EC381",     // Accent: secondary buttons, icons, active states
+          light: "#E6F0DC",      // Light green: backgrounds, cards, section fills
+          dark: "#1C2A18",       // Dark green: nav, footer, text on light backgrounds
+        },
+        status: {
+          success: "#6EEA8E",    // Success: messages, notifications, progress bars
+          warning: "#FF9900",    // Warning: alerts, highlighted CTAs
+        },
+        neutral: {
+          gray: "#D9E0E2",       // Neutral: borders, dividers, disabled states
         },
       },
       borderRadius: {

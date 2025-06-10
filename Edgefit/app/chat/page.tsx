@@ -102,7 +102,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen">
       {/* Mobile sidebar trigger */}
       <Sheet>
         <SheetTrigger asChild>
@@ -113,7 +113,7 @@ export default function ChatPage() {
         <SheetContent side="left" className="w-[250px] sm:w-[300px]">
           <SheetHeader>
             <SheetTitle className="flex items-center">
-              <Dumbbell className="h-5 w-5 text-green-600 mr-2" />
+              <Dumbbell className="h-5 w-5 text-brand-green mr-2" />
               EdgeFit-AI
             </SheetTitle>
           </SheetHeader>
@@ -145,13 +145,19 @@ export default function ChatPage() {
       </Sheet>
 
       {/* Desktop sidebar */}
-      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-white border-r">
+      <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-brand-dark text-white border-r">
         <div className="flex flex-col flex-grow pt-5 overflow-y-auto">
-          <div className="flex items-center flex-shrink-0 px-4">
-            <Dumbbell className="h-6 w-6 text-green-600" />
-            <span className="ml-2 text-xl font-bold">EdgeFit-AI</span>
+          <div className="flex items-center gap-4 flex-shrink-0 px-6">
+            <Dumbbell className="h-6 w-6" />
+            <span className="text-2xl font-bold">EdgeFit-AI</span>
           </div>
-          <div className="flex flex-col justify-between flex-1 mt-6">
+
+          {/* divider */}
+          <div className="bg-brand-light my-5 w-[90%] mx-auto">
+            <div className="border-b-2 border-white"></div>
+          </div>
+
+          <div className="flex flex-col justify-between flex-1">
             <nav className="flex-1 px-2 space-y-2">
               <Button variant="ghost" className="w-full justify-start" asChild>
                 <Link href="/profile">
@@ -166,20 +172,20 @@ export default function ChatPage() {
                 </Link>
               </Button>
               <Button variant="ghost" className="w-full justify-start" asChild>
-                 <Link href="/llm-interaction">
-                <Send className="mr-2 h-5 w-5" />
+                <Link href="/llm-interaction">
+                  <Send className="mr-2 h-5 w-5" />
                   LLM Interface
                 </Link>
               </Button>
 
             </nav>
-            <div className="p-4">
+            <div className="p-6">
               <Button
                 variant="outline"
-                className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+                className="w-fit bg-red-600 hover:bg-red-700 text-white hover:text-white"
                 onClick={handleLogout}
               >
-                <LogOut className="mr-2 h-5 w-5" />
+                <LogOut className="h-5 w-5" />
                 Logout
               </Button>
             </div>
@@ -189,16 +195,16 @@ export default function ChatPage() {
 
       {/* Chat area */}
       <div className="flex flex-col flex-1 md:pl-64">
-        <header className="sticky top-0 z-10 bg-white border-b">
+        <header className="sticky top-0 z-10 bg-brand-green text-white border-b">
           <div className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-            <div className="flex items-center">
-              <Avatar className="h-8 w-8 mr-2">
-                <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Bot" />
-                <AvatarFallback>FC</AvatarFallback>
+            <div className="flex items-center gap-4">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src="/bot-img.svg" alt="Bot" className="invert" />
+                <AvatarFallback className="text-black font-semibold">FC</AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-lg font-medium">Fitness Assistant</h1>
-                <p className="text-xs text-gray-500">Online</p>
+                <h1 className="text-xl font-semibold">Fitness Assistant</h1>
+                <p className="text-xs text-gray-200">Online</p>
               </div>
             </div>
             <Button variant="ghost" size="icon" className="md:hidden" onClick={handleLogout}>
@@ -208,14 +214,13 @@ export default function ChatPage() {
         </header>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+        <div className="flex-1 overflow-y-auto p-4 bg-brand-light">
           <div className="space-y-4">
             {messages.map((message) => (
               <div key={message.id} className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[80%] md:max-w-[70%] rounded-lg p-3 ${
-                    message.sender === "user" ? "bg-green-600 text-white" : "bg-white border"
-                  }`}
+                  className={`max-w-[80%] md:max-w-[70%] rounded-lg p-3 ${message.sender === "user" ? "bg-brand-green text-white" : "bg-white border"
+                    }`}
                 >
                   <p>{message.content}</p>
                   <p className={`text-xs mt-1 ${message.sender === "user" ? "text-green-100" : "text-gray-400"}`}>
@@ -243,16 +248,16 @@ export default function ChatPage() {
         </div>
 
         {/* Input area */}
-        <div className="border-t bg-white p-4">
+        <div className="border-t bg-br- p-4">
           <form onSubmit={handleSendMessage} className="flex space-x-2">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about workouts, diet plans, or fitness tips..."
-              className="flex-1"
+              className="flex-1 bg-brand-a"
               disabled={isLoading}
             />
-            <Button type="submit" className="bg-green-600 hover:bg-green-700" disabled={isLoading || !input.trim()}>
+            <Button type="submit" className="bg-brand-green hover:bg-green-700" disabled={isLoading || !input.trim()}>
               <Send className="h-4 w-4" />
               <span className="sr-only">Send</span>
             </Button>

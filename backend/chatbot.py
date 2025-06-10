@@ -15,7 +15,7 @@ router = APIRouter()
 class QueryRequest(BaseModel):
     prompt: str
 
-client = Groq(api_key="Your_groq_api")
+client = Groq(api_key="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")
 
 @router.post("/chat/")
 async def generate_saas_component(

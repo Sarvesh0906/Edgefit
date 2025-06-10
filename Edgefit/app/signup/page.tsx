@@ -102,13 +102,13 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-  
+
     if (!validateForm()) return
-  
+
     setIsLoading(true)
-  
+
     try {
-      const res = await fetch("http://localhost:8000/auth/register/", {
+      const res = await fetch("http://localhost:8000/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,14 +118,14 @@ export default function SignupPage() {
           password: formData.password,
         }),
       })
-  
+
       if (!res.ok) {
         const errorData = await res.json()
         throw new Error(errorData.detail || "Registration failed")
       }
-  
+
       // Optionally show success toast or notification here
-  
+
       // Redirect to login or chat page
       router.push("/chat")
     } catch (error: any) {
@@ -135,20 +135,22 @@ export default function SignupPage() {
       setIsLoading(false)
     }
   }
-  
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-green-50 p-4">
-      <Link href="/" className="absolute top-4 left-4 flex items-center text-green-600 hover:text-green-700">
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Home
+    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-light p-4">
+      <Link href="/" className="absolute top-4 left-4 flex items-center text-brand-green hover:text-green-700">
+        <Button className="bg-brand-green hover:bg-green-700">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Button>
       </Link>
 
-      <div className="flex items-center mb-8">
-        <Dumbbell className="h-8 w-8 text-green-600 mr-2" />
-        <h1 className="text-2xl font-bold">EdgeFit-ai</h1>
+      <div className="flex items-center gap-4 mb-8">
+        <Dumbbell className="h-8 w-8 text-brand-green" />
+        <h1 className="text-3xl font-bold text-brand-green">EdgeFit-AI</h1>
       </div>
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md shadow-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Create an Account</CardTitle>
           <CardDescription className="text-center">
@@ -219,11 +221,11 @@ export default function SignupPage() {
               <div className="grid gap-1.5 leading-none">
                 <Label htmlFor="terms" className="text-sm font-normal">
                   I agree to the{" "}
-                  <Link href="#" className="text-green-600 hover:text-green-700 underline">
+                  <Link href="#" className="text-brand-green hover:text-green-700 underline">
                     Terms of Service
                   </Link>{" "}
                   and{" "}
-                  <Link href="#" className="text-green-600 hover:text-green-700 underline">
+                  <Link href="#" className="text-brand-green hover:text-green-700 underline">
                     Privacy Policy
                   </Link>
                 </Label>
@@ -238,7 +240,7 @@ export default function SignupPage() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-500">
             Already have an account?{" "}
-            <Link href="/login" className="text-green-600 hover:text-green-700 font-medium">
+            <Link href="/login" className="text-brand-green hover:text-green-700 font-medium">
               Login
             </Link>
           </p>

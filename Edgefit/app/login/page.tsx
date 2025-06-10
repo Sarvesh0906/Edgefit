@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -70,12 +68,12 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-  
+
     if (!validateForm()) return
     setIsLoading(true)
-  
+
     try {
-      const response = await fetch("http://localhost:8000/auth/login/", {
+      const response = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,14 +83,14 @@ export default function LoginPage() {
           password: formData.password,
         }),
       })
-  
+
       if (!response.ok) {
         throw new Error("Invalid credentials")
       }
-  
+
       const data = await response.json()
       localStorage.setItem("token", data.access_token) // Store the token
-  
+
       router.push("/chat") // Redirect to chat page
     } catch (error: any) {
       console.error("Login failed:", error)
@@ -101,26 +99,29 @@ export default function LoginPage() {
       setIsLoading(false)
     }
   }
-  
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-green-50 p-4">
-      <Link href="/" className="absolute top-4 left-4 flex items-center text-green-600 hover:text-green-700">
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Home
+    <div className="min-h-screen flex flex-col items-center justify-center bg-brand-light p-4">
+      <Link href="/" className="absolute top-4 left-4 flex items-center text-brand-green hover:text-green-700">
+        <Button className="bg-brand-green hover:bg-green-700">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Home
+        </Button>
       </Link>
 
-      <div className="flex items-center mb-8">
-        <Dumbbell className="h-8 w-8 text-green-600 mr-2" />
-        <h1 className="text-2xl font-bold">EdgeFit-AI</h1>
+      <div className="flex items-center gap-4 mb-8">
+        <Dumbbell className="h-8 w-8 text-brand-green" />
+        <h1 className="text-3xl font-bold text-brand-green">EdgeFit-AI</h1>
       </div>
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md shadow-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
           <CardDescription className="text-center">
             Login to your account to continue your fitness journey
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -139,7 +140,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" className="text-sm text-green-600 hover:text-green-700">
+                <Link href="/forgot-password" className="text-sm text-brand-green hover:text-green-700">
                   Forgot password?
                 </Link>
               </div>
@@ -168,7 +169,7 @@ export default function LoginPage() {
         <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-500">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-green-600 hover:text-green-700 font-medium">
+            <Link href="/signup" className="text-brand-green hover:text-green-700 font-medium">
               Sign up
             </Link>
           </p>
