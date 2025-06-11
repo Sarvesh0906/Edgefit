@@ -5,7 +5,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, User, MessageSquare } from 'lucide-react';
+import { Mail, Phone, User, MessageSquare, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -15,19 +17,19 @@ const ContactForm = () => {
     inquiryType: '',
     message: ''
   });
-  
+
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    
+
     // Simulate form submission
     toast({
       title: "Message Sent!",
       description: "Thank you for contacting us. We'll get back to you within 24 hours.",
     });
-    
+
     // Reset form
     setFormData({
       name: '',
@@ -138,24 +140,34 @@ const ContactForm = () => {
           />
         </div>
 
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           className="w-full bg-brand-green hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
         >
           Send Message
         </Button>
       </form>
 
-      <div className="mt-8 border-t border-neutral-gray/30">
-        <div className="flex flex-col sm:flex-row gap-4 text-sm text-brand-dark/70">
+      <div className="mt-8 border-t border-neutral-gray/30 flex justify-between">
+        <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4 text-sm text-brand-dark/70">
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-brand-accent" />
             <span>support@aifitness.com</span>
           </div>
+
           <div className="flex items-center gap-2">
             <Phone className="w-4 h-4 text-brand-accent" />
             <span>+1 (555) 123-FLEX</span>
           </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline" className="text-brand-dark hover:bg-brand-dark hover:text-white font-semibold transition-all duration-300">
+            <Link href="/" className="flex gap-2 items-center justify-center">
+              <ArrowLeft className="h-4 w-4" />
+              Home
+            </Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -4,7 +4,7 @@ import ContactForm from '@/components/ContactForm';
 
 const Contact = () => {
   return (
-    <div className="h-screen bg-brand-light">
+    <div className="min-h-screen bg-brand-light">
       <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Image Section - Hidden on mobile */}
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
