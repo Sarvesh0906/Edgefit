@@ -194,25 +194,7 @@ export default function LoginPage() {
                     </div>
                     {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                   </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="remember"
-                        checked={formData.rememberMe}
-                        onCheckedChange={handleCheckboxChange}
-                        className="border-brand-green data-[state=checked]:bg-brand-green data-[state=checked]:text-white"
-                      />
-                      <Label htmlFor="remember" className="text-sm font-normal">
-                        Remember me for 30 days
-                      </Label>
-                    </div>
-                    <Link
-                      href="/forgot-password"
-                      className="text-sm text-brand-green hover:text-green-700"
-                    >
-                      Forgot password?
-                    </Link>
-                  </div>
+                  
                   <Button type="submit" className="w-full bg-brand-green hover:bg-green-700" disabled={isLoading}>
                     {isLoading ? "Signing in..." : "Sign In"}
                   </Button>
