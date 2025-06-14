@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Home, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 interface NotFoundProps {
   redirectLink?: string;
@@ -12,10 +12,10 @@ const NotFound = ({
   redirectMessage = 'Back to Home',
 }: NotFoundProps) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-brand-light">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-brand-light via-white to-brand-light">
       <div className="text-center max-w-md mx-auto p-6">
         <div className="mb-8">
-          <h1 className="text-6xl font-bold text-brand-green mb-4">404</h1>
+          <h1 className="text-6xl font-bold text-brand-green mb-4">404</h1> 
           <h2 className="text-2xl font-semibold text-brand-dark mb-2">Page Not Found</h2>
           <p className="text-brand-dark/70">
             Oops! The page you're looking for doesn't exist. It might have been moved or deleted.

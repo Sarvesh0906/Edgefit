@@ -1,13 +1,13 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Dumbbell, Send, Menu, LogOut, User, Mail, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Dumbbell, Send, Menu, LogOut, User, Mail, X, ArrowLeft, AlertCircle } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 type Message = {
   id: string
@@ -228,7 +228,7 @@ export default function LLMInteractionPage() {
           </div>
         </div>
       </div>
-
+ 
       {/* Main content */}
       <div className="flex flex-col flex-1 md:pl-64">
         <header className="sticky top-0 z-10 bg-gradient-to-r from-brand-green to-green-700 text-white border-b border-brand-accent/20 shadow-lg">
@@ -243,12 +243,65 @@ export default function LLMInteractionPage() {
                 <p className="text-xs text-white/80">Advanced AI Interaction</p>
               </div>
             </div>
-            <Link href="/chat" className="absolute top-4 left-4 flex items-center text-brand-green hover:text-green-700 transition-all duration-300 z-50">
-              <Button className="bg-brand-green hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300">
-                <ArrowLeft className="h-4 w-4" />
-                <span className="ml-2 hidden md:block">Back to Chat</span>
-              </Button>
-            </Link>
+
+            {/* mobile sidebar */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden hover:bg-white/10">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[250px] sm:w-[300px] bg-brand-dark text-white border-l border-brand-accent/20">
+                {/* mobile sidebar title */}
+                <SheetHeader>
+                  <SheetTitle className="flex items-center text-white px-4 gap-2">
+                    <Dumbbell className="h-6 w-6" />
+                    <span className="text-2xl font-bold">EdgeFit-AI</span>
+                  </SheetTitle>
+                </SheetHeader>
+
+                {/* divider */}
+                <div className="bg-brand-light/20 mt-5 w-full mx-auto rounded-full">
+                  <div className="border-b border-brand-accent/20"></div>
+                </div>
+
+                {/* mobile sidebar content */}
+                <div className="flex flex-col justify-between h-[90%]">
+                  <div className="space-y-4 mt-6">
+                    <Button variant="ghost" className="w-full justify-start hover:bg-brand-green/10 hover:text-brand-green" asChild>
+                      <Link href="/dashboard">
+                        <User className="mr-2 h-5 w-5" />
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" className="w-full justify-start hover:bg-brand-green/10 hover:text-brand-green" asChild>
+                      <Link href="/contact">
+                        <Mail className="mr-2 h-5 w-5" />
+                        Contact
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" className="w-full justify-start hover:bg-brand-green/10 hover:text-brand-green" asChild>
+                      <Link href="/chat">
+                        <Send className="mr-2 h-5 w-5" />
+                        Chat
+                      </Link>
+                    </Button>
+                  </div>
+
+                  {/* mobile sidebar logout button */}
+                  <div className="p-6">
+                    <Button
+                      variant="outline"
+                      className="w-full bg-red-600 hover:bg-red-700 text-white hover:text-white border-red-500/50"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="h-5 w-5 mr-2" />
+                      Logout
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </header>
 

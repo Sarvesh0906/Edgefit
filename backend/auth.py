@@ -3,16 +3,22 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
-from database import users_collection
+import database
 import jwt
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 router = APIRouter()
 
 # JWT Config
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "M9hXWnBFLcOE0rUsk8pHvE0z0e_zX_UZK-smpLq_9iU")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("JWT_SECRET_KEY environment variable is not set")
+
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
@@ -49,7 +55,7 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 
 # Authenticate user for login
 async def authenticate_user(username: str, password: str):
-    user = await users_collection.find_one({"username": username})
+    user = await database.users_collection.find_one({"username": username})
     if not user or not pwd_context.verify(password, user["password"]):
         return None
     return user
@@ -57,19 +63,19 @@ async def authenticate_user(username: str, password: str):
 # 🔹 Register
 @router.post("/register")
 async def register_user(user: User):
-    existing_user = await users_collection.find_one({"username": user.username})
+    existing_user = await database.users_collection.find_one({"username": user.username})
     if existing_user:
         raise HTTPException(status_code=400, detail="Username already taken")
     
     hashed_password = pwd_context.hash(user.password)
-    await users_collection.insert_one({"username": user.username, "password": hashed_password})
+    await database.users_collection.insert_one({"username": user.username, "password": hashed_password})
     
     return {"message": "User registered successfully"}
 
 # 🔹 Login
 @router.post("/login")
 async def login_user(user: User):
-    db_user = await users_collection.find_one({"username": user.username})
+    db_user = await database.users_collection.find_one({"username": user.username})
     if not db_user or not pwd_context.verify(user.password, db_user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 

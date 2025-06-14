@@ -1,10 +1,16 @@
+"use client"
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Apple, Coffee, Utensils, Heart, Leaf } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
-import { Apple, Coffee, Utensils, ArrowLeft, Heart, Leaf } from 'lucide-react';
+import { BackButton } from '@/components/BackButton';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 const Nutrition = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const mealPlans = [
     {
       id: 1,
@@ -43,18 +49,26 @@ const Nutrition = () => {
     "Include protein in every meal for muscle maintenance",
     "Eat a variety of colorful fruits and vegetables",
     "Don't skip meals - maintain consistent eating patterns"
-  ];
+  ]; 
+
+  useEffect(() => {
+    // Simulate loading data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingSpinner fullScreen text="Loading nutrition plans..." />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-brand-light via-white to-brand-light">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex items-center">
-          <Link href="/dashboard" className="absolute top-4 left-4 flex items-center text-brand-green hover:text-green-700 transition-all duration-300 z-50">
-            <Button className="bg-brand-green hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="ml-2 hidden md:block">Back to Dashboard</span>
-            </Button>
-          </Link>
+        <div className="flex items-center justify-start">
+          <BackButton href="/dashboard" text="Back to Dashboard" className="absolute top-4 left-4 "/>
         </div>
 
         <div className="mb-12 text-center">

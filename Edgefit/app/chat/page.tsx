@@ -2,17 +2,18 @@
 
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Dumbbell, Send, Menu, LogOut, User, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Dumbbell, Send, Menu, LogOut, User, Mail, X } from "lucide-react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { LoadingSpinner } from "@/components/LoadingSpinner"
 
 type Message = {
   id: string
-  content: string
+  content: string 
   sender: "user" | "bot"
   timestamp: Date
 }
@@ -29,75 +30,102 @@ export default function ChatPage() {
     },
   ])
   const [isLoading, setIsLoading] = useState(false)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    if (!token) {
+      router.push("/login")
+      return
+    }
+    setIsInitialLoading(false)
+  }, [router])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
   const sendToBackend = async (prompt: string): Promise<string> => {
-    const res = await fetch("http://localhost:8000/bot/chat/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ prompt }),
-    })
+    try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            throw new Error("No authentication token found");
+        }
 
-    if (!res.ok) {
-      throw new Error("Failed to get response from server")
+        const res = await fetch("http://localhost:8000/bot/chat/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ prompt }),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            throw new Error(errorData.detail || "Failed to get response from server");
+        }
+
+        const data = await res.json();
+        return data.response;
+    } catch (error) {
+        console.error("Error in sendToBackend:", error);
+        throw error;
     }
+};
 
-    const data = await res.json()
-    return data.response
-  }
-
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!input.trim()) return
+const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
-      content: input,
-      sender: "user",
-      timestamp: new Date(),
-    }
+        id: Date.now().toString(),
+        content: input,
+        sender: "user",
+        timestamp: new Date(),
+    };
 
-    setMessages((prev) => [...prev, userMessage])
-    setInput("")
-    setIsLoading(true)
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setIsLoading(true);
 
     try {
-      const botReply = await sendToBackend(userMessage.content)
+        const botReply = await sendToBackend(userMessage.content);
 
-      const botMessage: Message = {
-        id: Date.now().toString(),
-        content: botReply,
-        sender: "bot",
-        timestamp: new Date(),
-      }
+        const botMessage: Message = {
+            id: Date.now().toString(),
+            content: botReply,
+            sender: "bot",
+            timestamp: new Date(),
+        };
 
-      setMessages((prev) => [...prev, botMessage])
+        setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
-      console.error("Error:", error)
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          content: "Oops! Something went wrong. Please try again later.",
-          sender: "bot",
-          timestamp: new Date(),
-        },
-      ])
+        console.error("Error:", error);
+        const errorMessage = error instanceof Error ? error.message : "Something went wrong. Please try again later.";
+        
+        setMessages((prev) => [
+            ...prev,
+            {
+                id: Date.now().toString(),
+                content: `Error: ${errorMessage}`,
+                sender: "bot",
+                timestamp: new Date(),
+            },
+        ]);
     } finally {
-      setIsLoading(false)
+        setIsLoading(false);
     }
-  }
+}; 
 
   const handleLogout = () => {
     localStorage.removeItem("token")
     router.push("/")
+  }
+
+  if (isInitialLoading) {
+    return <LoadingSpinner fullScreen text="Loading chat..." />
   }
 
   return (
@@ -280,11 +308,7 @@ export default function ChatPage() {
             {isLoading && (
               <div className="flex justify-start">
                 <div className="max-w-[80%] md:max-w-[70%] rounded-2xl p-4 bg-white border border-brand-accent/20 shadow-lg">
-                  <div className="flex space-x-2">
-                    <div className="w-2 h-2 rounded-full bg-brand-green animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <div className="w-2 h-2 rounded-full bg-brand-green animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <div className="w-2 h-2 rounded-full bg-brand-green animate-bounce" style={{ animationDelay: "300ms" }} />
-                  </div>
+                  <LoadingSpinner size="sm" text="AI is thinking..." />
                 </div>
               </div>
             )}

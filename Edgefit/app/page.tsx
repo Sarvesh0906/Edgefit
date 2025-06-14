@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Dumbbell, MessageCircle, Shield, Phone, Mail, Clock, HeadphonesIcon } from "lucide-react"
+import { ArrowRight, Dumbbell, MessageCircle, Shield, Phone, Mail, Clock } from "lucide-react"
 import Footer from "@/components/Footer"
 import BackToTop from "@/components/BackToTop"
 

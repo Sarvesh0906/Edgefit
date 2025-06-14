@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import Link from 'next/link';
+import emailjs from '@emailjs/browser';
+import { Mail, Phone, User, MessageSquare, ArrowLeft } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useToast } from '@/hooks/use-toast';
-import { Mail, Phone, User, MessageSquare, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-
 
 const ContactForm = () => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,26 +20,74 @@ const ContactForm = () => {
     message: ''
   });
 
-  const { toast } = useToast();
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const getInquiryTypeLabel = (value: string) => {
+    const labels: { [key: string]: string } = {
+      'workout-plans': 'Personalized Workout Plans',
+      'nutrition': 'Nutrition Advice',
+      'fitness-tracking': 'Fitness Tracking',
+      'ai-chatbot': 'AI Chatbot Support',
+      'technical': 'Technical Support',
+      'general': 'General Inquiry'
+    };
+    return labels[value] || value;
+  };
+
+  const isFormValid = () => {
+    return (
+      formData.name.trim() !== '' &&
+      formData.email.trim() !== '' &&
+      formData.message.trim() !== '' &&
+      formData.inquiryType !== ''
+    );
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    
+    if (!isFormValid()) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
 
-    // Simulate form submission
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We'll get back to you within 24 hours.",
-    });
+    setIsLoading(true);
 
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      inquiryType: '',
-      message: ''
-    });
+    try {
+      await emailjs.sendForm(
+        process.env.NEXT_PUBLIC_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_TEMPLATE_ID!,
+        formRef.current!,
+        process.env.NEXT_PUBLIC_PUBLIC_KEY!
+      );
+
+      toast.success("Message sent successfully! We'll get back to you within 24 hours.");
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        inquiryType: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('EmailJS Error:', error);
+      toast.error("Failed to send message. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -56,7 +106,17 @@ const ContactForm = () => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+        <input 
+          type="hidden" 
+          name="inquiryType" 
+          value={getInquiryTypeLabel(formData.inquiryType)} 
+        />
+        <input 
+          type="hidden" 
+          name="time" 
+          value={getCurrentTime()} 
+        />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="name" className="flex items-center gap-2 text-brand-dark font-medium">
@@ -65,11 +125,13 @@ const ContactForm = () => {
             </Label>
             <Input
               id="name"
+              name="name"
               type="text"
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               placeholder="Enter your full name"
               required
+              className="border-neutral-gray"
             />
           </div>
 
@@ -80,12 +142,13 @@ const ContactForm = () => {
             </Label>
             <Input
               id="email"
+              name="email"
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               placeholder="your.email@example.com"
               required
-              className="border-neutral-gray focus:border-brand-green focus:ring-brand-green/20"
+              className="border-neutral-gray"
             />
           </div>
         </div>
@@ -98,18 +161,22 @@ const ContactForm = () => {
             </Label>
             <Input
               id="phone"
+              name="phone"
               type="tel"
               value={formData.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
               placeholder="(555) 123-4567"
-              className="border-neutral-gray focus:border-brand-green focus:ring-brand-green/20"
+              className="border-neutral-gray"
             />
           </div>
 
           <div className="space-y-2">
             <Label className="text-brand-dark font-medium">Inquiry Type</Label>
-            <Select onValueChange={(value) => handleInputChange('inquiryType', value)}>
-              <SelectTrigger className="border-neutral-gray focus:border-brand-green focus:ring-brand-green/20">
+            <Select 
+              onValueChange={(value) => handleInputChange('inquiryType', value)}
+              value={formData.inquiryType}
+            >
+              <SelectTrigger className="border-neutral-gray">
                 <SelectValue placeholder="Select inquiry type" />
               </SelectTrigger>
               <SelectContent>
@@ -131,20 +198,22 @@ const ContactForm = () => {
           </Label>
           <Textarea
             id="message"
+            name="message"
             value={formData.message}
             onChange={(e) => handleInputChange('message', e.target.value)}
             placeholder="Tell us about your fitness goals, current activity level, or any specific questions you have..."
             rows={5}
             required
-            className="border-neutral-gray focus:border-brand-green focus:ring-brand-green/20 resize-none"
+            className="border-neutral-gray resize-none"
           />
         </div>
 
         <Button
           type="submit"
-          className="w-full bg-brand-green hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+          disabled={isLoading || !isFormValid()}
+          className="w-full bg-brand-green hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Send Message
+          {isLoading ? 'Sending...' : 'Send Message'}
         </Button>
       </form>
 

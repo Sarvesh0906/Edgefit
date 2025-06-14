@@ -1,10 +1,16 @@
+"use client"
+
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Clock, Zap, Target } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
-import { Clock, Zap, Target, ArrowLeft } from 'lucide-react';
+import { BackButton } from '@/components/BackButton';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 const Workouts = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const workoutPlans = [
     {
       id: 1,
@@ -38,16 +44,24 @@ const Workouts = () => {
     }
   ];
 
+  useEffect(() => {
+    // Simulate loading data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingSpinner fullScreen text="Loading workout plans..." />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-brand-light via-white to-brand-light">
       <div className="container mx-auto px-12 md:px-8 py-10">
-        <div className="flex items-center">
-          <Link href="/dashboard" className="absolute top-4 left-4 flex items-center text-brand-green hover:text-green-700 transition-all duration-300 z-50">
-            <Button className="bg-brand-green hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="ml-2 hidden md:block">Back to Dashboard</span>
-            </Button>
-          </Link>
+        <div className="flex items-center justify-start">
+          <BackButton href="/dashboard" text="Back to Dashboard" className="absolute top-4 left-4 "/>
         </div>
 
         <div className="mb-12 text-center">
@@ -112,21 +126,3 @@ const Workouts = () => {
 };
 
 export default Workouts;
-
-// Add these styles to your global CSS file
-const styles = `
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.5s ease-out forwards;
-}
-`;

@@ -1,19 +1,35 @@
 "use client"
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from "next/navigation"
-import { Activity, Target, Utensils, MessageSquare, TrendingUp, LogOut } from 'lucide-react';
+import { Activity, Target, Utensils, MessageSquare, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import Footer from '@/components/Footer';
 
 const Dashboard = () => {
 	const router = useRouter()
+	const [isLoading, setIsLoading] = useState(true)
+
+	useEffect(() => {
+		// Simulate loading data
+		const timer = setTimeout(() => {
+			setIsLoading(false)
+		}, 1000)
+
+		return () => clearTimeout(timer)
+	}, [])
 
 	const handleLogout = () => {
 		// In a real app, you would clear the token and call the logout API
 		localStorage.removeItem("token")
 		router.push("/")
+	}
+
+	if (isLoading) {
+		return <LoadingSpinner fullScreen text="Loading your dashboard..." />
 	}
 
 	return (
@@ -87,62 +103,71 @@ const Dashboard = () => {
 					</Card>
 				</div>
 
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-					<Card className="border-brand-accent/20 bg-white/80 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '300ms' }}>
+				<div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+					<Card className="border-brand-accent/20 bg-white/80 backdrop-blur-sm animate-fade-in lg:col-span-3" style={{ animationDelay: '300ms' }}>
 						<CardHeader>
 							<CardTitle className="flex items-center text-brand-dark text-xl">
 								<Activity className="w-6 h-6 mr-3 text-status-success" />
-								Recent Activity
+								Fitness Tips
 							</CardTitle>
 						</CardHeader>
 						<CardContent>
-							<div className="space-y-4">
-								<div className="flex items-center justify-between p-4 bg-brand-light/50 rounded-xl hover:bg-brand-light/70 transition-colors duration-200">
-									<span className="text-brand-dark font-medium">Upper Body Workout</span>
-									<span className="text-sm text-brand-dark/60 bg-white px-3 py-1 rounded-full">Today</span>
+							<div className="space-y-3">
+								<div className="p-4 bg-brand-light/50 rounded-xl">
+									<h3 className="text-brand-dark font-medium mb-2">Stay Hydrated</h3>
+									<p className="text-brand-dark/70">Drink at least 8 glasses of water daily to maintain optimal performance.</p>
 								</div>
-								<div className="flex items-center justify-between p-4 bg-brand-light/50 rounded-xl hover:bg-brand-light/70 transition-colors duration-200">
-									<span className="text-brand-dark font-medium">Nutrition Plan Updated</span>
-									<span className="text-sm text-brand-dark/60 bg-white px-3 py-1 rounded-full">Yesterday</span>
+								<div className="p-4 bg-brand-light/50 rounded-xl">
+									<h3 className="text-brand-dark font-medium mb-2">Proper Form</h3>
+									<p className="text-brand-dark/70">Focus on maintaining correct form during exercises to prevent injuries.</p>
 								</div>
-								<div className="flex items-center justify-between p-4 bg-brand-light/50 rounded-xl hover:bg-brand-light/70 transition-colors duration-200">
-									<span className="text-brand-dark font-medium">Goal Progress Check</span>
-									<span className="text-sm text-brand-dark/60 bg-white px-3 py-1 rounded-full">2 days ago</span>
+								<div className="p-4 bg-brand-light/50 rounded-xl">
+									<h3 className="text-brand-dark font-medium mb-2">Rest Days</h3>
+									<p className="text-brand-dark/70">Remember to take rest days to allow your body to recover and grow stronger.</p>
+								</div>
+								<div className="p-4 bg-brand-light/50 rounded-xl">
+									<h3 className="text-brand-dark font-medium mb-2">Consistency is Key</h3>
+									<p className="text-brand-dark/70">Small, consistent efforts over time yield better results than intense, sporadic workouts.</p>
 								</div>
 							</div>
 						</CardContent>
 					</Card>
 
-					<Card className="border-brand-accent/20 bg-white/80 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '400ms' }}>
-						<CardHeader>
-							<CardTitle className="flex items-center text-brand-dark text-xl">
-								<TrendingUp className="w-6 h-6 mr-3 text-status-warning" />
-								Progress Overview
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div className="space-y-6">
-								<div>
-									<div className="flex justify-between text-sm mb-2">
-										<span className="text-brand-dark font-medium">Weekly Goal</span>
-										<span className="text-brand-dark font-medium">75%</span>
-									</div>
-									<div className="w-full bg-neutral-gray/30 rounded-full h-3 overflow-hidden">
-										<div className="bg-status-success h-3 rounded-full transition-all duration-500 ease-out" style={{ width: '75%' }}></div>
-									</div>
+					<div className="lg:col-span-2 space-y-8">
+						<Card className="border-brand-accent/20 bg-white/80 backdrop-blur-sm animate-fade-in" style={{ animationDelay: '350ms' }}>
+							<CardHeader>
+								<CardTitle className="flex items-center text-brand-dark text-xl">
+									<Activity className="w-6 h-6 mr-3 text-brand-green" />
+									Daily Motivation
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className="p-4 bg-brand-light/50 rounded-xl">
+									<blockquote className="text-brand-dark/80 italic mb-2 text-md">
+										"Success isn't always about greatness. It's about consistency. Consistent hard work gains success. Greatness will come."
+									</blockquote>
+									<p className="text-brand-dark/60 text-sm text-right">- Dwayne "The Rock" Johnson</p>
 								</div>
-								<div>
-									<div className="flex justify-between text-sm mb-2">
-										<span className="text-brand-dark font-medium">Monthly Target</span>
-										<span className="text-brand-dark font-medium">60%</span>
-									</div>
-									<div className="w-full bg-neutral-gray/30 rounded-full h-3 overflow-hidden">
-										<div className="bg-brand-accent h-3 rounded-full transition-all duration-500 ease-out" style={{ width: '60%' }}></div>
-									</div>
+							</CardContent>
+						</Card>
+
+						<Card className="border-brand-accent/20 bg-white/80 backdrop-blur-sm animate-fade-in h-fit" style={{ animationDelay: '400ms' }}>
+							<CardHeader>
+								<CardTitle className="flex items-center text-brand-dark text-xl">
+									<MessageSquare className="w-6 h-6 mr-3 text-status-warning" />
+									Get in Touch
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className="space-y-6">
+									<p className="text-brand-dark/70">Have questions or need support? Our team is here to help you on your fitness journey.</p>
+									<Button asChild className="bg-brand-green hover:bg-green-700 w-full text-base py-6 transition-all duration-300">
+										<Link href="/contact">Contact Support</Link>
+									</Button>
 								</div>
-							</div>
-						</CardContent>
-					</Card>
+							</CardContent>
+						</Card>
+					</div>
 				</div>
 			</div>
 

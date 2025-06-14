@@ -1,12 +1,13 @@
 "use client";
 
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { Clock, Zap, Utensils, Heart, Leaf } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
-import { Clock, Zap, ArrowLeft, Utensils, Heart, Leaf } from 'lucide-react';
-import { useParams } from 'next/navigation';
 import NotFound from '@/app/not-found';
+import { BackButton } from '@/components/BackButton';
 
 // Define the meal plans data
 const mealPlans = {
@@ -184,12 +185,7 @@ export default function MealPlanPage() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Back to Nutrition */}
         <div className="flex items-center mb-8">
-          <Link href="/nutrition" className="flex items-center text-brand-green hover:text-green-700 transition-all duration-300 transform hover:-translate-x-1">
-            <Button className="bg-brand-green hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300">
-              <ArrowLeft className="h-4 w-4" />
-              <span className="ml-2">Back to Nutrition</span>
-            </Button>
-          </Link>
+          <BackButton href="/nutrition" text="Back to Nutrition" />
         </div>
 
         {/* Meal Plan */}

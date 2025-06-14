@@ -1,10 +1,11 @@
+import Link from 'next/link';
+import { Brain, Users, Target, Shield, Code, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Link from 'next/link';
-import { Brain, Users, Target, Shield, ArrowLeft, Code, Star, Award } from 'lucide-react';
 import Footer from '@/components/Footer';
 import BackToTop from '@/components/BackToTop';
+import { BackButton } from '@/components/BackButton';
 
 const About = () => {
   const features = [
@@ -94,12 +95,7 @@ const About = () => {
     <div className="min-h-screen bg-gradient-to-b from-brand-light via-white to-brand-light">
       <div className="container mx-auto p-12 md:px-24 lg:px-32">
         <div className="flex items-center mb-12">
-          <Link href="/" className="absolute top-4 left-4 flex items-center text-brand-green hover:text-green-700 transition-colors duration-300 z-50">
-            <Button className="bg-brand-green hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Button>
-          </Link>
+          <BackButton href="/" text="Back to Home" className="absolute top-4 left-4" />
         </div>
 
         <div className="max-w-5xl mx-auto">

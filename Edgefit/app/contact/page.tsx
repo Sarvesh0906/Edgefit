@@ -1,12 +1,29 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import ContactForm from '@/components/ContactForm';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 const Contact = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading data
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingSpinner fullScreen text="Loading contact information..." />;
+  }
+
   return (
     <div className="min-h-screen bg-brand-light">
       <div className="flex flex-col lg:flex-row min-h-screen">
-        {/* Image Section - Hidden on mobile */}
+        {/* Image Section - Hidden on mobile */} 
         <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-brand-green/20 to-brand-accent/20 z-10"></div>
           <img

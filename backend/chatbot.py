@@ -3,9 +3,17 @@ from groq import Groq
 from pydantic import BaseModel
 import pandas as pd
 from datetime import datetime
-from database import chat_collection
+import database
 from auth import verify_token  # Use the JWT authentication from auth.py
-from database import llm_collection
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+# Get Groq API key from environment variable
+api_key = os.getenv("GROQ_API_KEY")
+if not api_key:
+    raise ValueError("GROQ_API_KEY environment variable is not set")
 
 # Load dataset
 df = pd.read_csv('../dailyActivity_merged.csv')
@@ -15,7 +23,7 @@ router = APIRouter()
 class QueryRequest(BaseModel):
     prompt: str
 
-client = Groq(api_key="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")
+client = Groq(api_key=api_key)
 
 @router.post("/chat/")
 async def generate_saas_component(
@@ -36,9 +44,8 @@ async def generate_saas_component(
 
     generated_text = response.choices[0].message.content
 
-
     # Save chat history in MongoDB
-    chat_collection.insert_one({
+    await database.chat_collection.insert_one({
         "username": username,
         "prompt": request.prompt,
         "response": generated_text,
@@ -54,7 +61,7 @@ class SaveRequest(BaseModel):
 
 @router.post("/save")
 async def save_interaction(data: SaveRequest):
-    llm_collection.insert_one({
+    await database.llm_collection.insert_one({
         "prompt": data.prompt,
         "response": data.response
     })

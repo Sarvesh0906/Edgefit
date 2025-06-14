@@ -1,34 +1,33 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { Dumbbell, Eye, EyeOff } from "lucide-react"
+import { toast } from "react-hot-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Dumbbell, ArrowLeft } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { LoadingSpinner } from "@/components/LoadingSpinner"
+import { BackButton } from "@/components/BackButton"
 
 export default function SignupPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
+    full_name: "",
     password: "",
     confirmPassword: "",
     agreeTerms: false,
   })
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    agreeTerms: "",
-  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -36,8 +35,8 @@ export default function SignupPage() {
       ...formData,
       [name]: value,
     })
-    // Clear error when user types
-    if (errors[name as keyof typeof errors]) {
+    // Clear error when user starts typing
+    if (errors[name]) {
       setErrors({
         ...errors,
         [name]: "",
@@ -59,78 +58,107 @@ export default function SignupPage() {
   }
 
   const validateForm = () => {
-    let valid = true
-    const newErrors = { ...errors }
+    const newErrors: { [key: string]: string } = {}
 
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required"
-      valid = false
+    if (!formData.username.trim()) {
+      newErrors.username = "Username is required"
+    } else if (formData.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters"
     }
 
-    if (!formData.email) {
+    if (!formData.email.trim()) {
       newErrors.email = "Email is required"
-      valid = false
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid"
-      valid = false
+    }
+
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = "Full name is required"
     }
 
     if (!formData.password) {
       newErrors.password = "Password is required"
-      valid = false
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters"
-      valid = false
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters"
     }
 
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password"
-      valid = false
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match"
-      valid = false
     }
 
     if (!formData.agreeTerms) {
       newErrors.agreeTerms = "You must agree to the terms and conditions"
-      valid = false
     }
 
     setErrors(newErrors)
-    return valid
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!validateForm()) return
+    if (!validateForm()) {
+      return
+    }
 
     setIsLoading(true)
 
     try {
-      const res = await fetch("http://localhost:8000/auth/register", {
+      const response = await fetch("http://localhost:8000/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: formData.email, // assuming email is used as username
+          username: formData.username,
+          email: formData.email,
+          full_name: formData.full_name,
           password: formData.password,
         }),
       })
 
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.detail || "Registration failed")
+      const data = await response.json()
+
+      if (!response.ok) {
+        // Handle specific backend errors
+        if (data.detail) {
+          if (typeof data.detail === 'string') {
+            // Handle single error message
+            if (data.detail.toLowerCase().includes('username')) {
+              setErrors({ username: 'Username is already taken' })
+            } else if (data.detail.toLowerCase().includes('email')) {
+              setErrors({ email: 'Email is already registered' })
+            } else {
+              setErrors({ general: data.detail })
+            }
+          } else if (Array.isArray(data.detail)) {
+            // Handle multiple error messages
+            const newErrors: { [key: string]: string } = {}
+            data.detail.forEach((error: any) => {
+              if (error.loc && error.loc[1]) {
+                const field = error.loc[1]
+                newErrors[field] = error.msg
+              }
+            })
+            setErrors(newErrors)
+          }
+        }
+        throw new Error(data.detail || "Registration failed")
       }
 
-      // Optionally show success toast or notification here
+      // Store token and user data
+      localStorage.setItem("token", data.access_token)
+      localStorage.setItem("user", JSON.stringify(data.user))
 
-      // Redirect to login or chat page
-      router.push("/dashboard")
+      toast.success("Registration successful!")
+      router.push("/login")
     } catch (error: any) {
-      console.error("Signup failed:", error.message)
-      alert(error.message || "Something went wrong during signup")
+      console.error("Registration error:", error)
+      if (!error.message?.includes("Registration failed")) {
+        toast.error(error instanceof Error ? error.message : "Registration failed")
+      }
     } finally {
       setIsLoading(false)
     }
@@ -160,7 +188,7 @@ export default function SignupPage() {
         </div>
 
         {/* Form Section */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-12 md:px-16 xl:p-20">
+        <div className="w-full lg:w-1/2 flex items-center justify-center py-6 px-12 md:px-16 xl:px-10">
           <div className="w-full max-w-2xl">
             {/* Mobile header */}
             <div className="lg:hidden text-center mb-8">
@@ -172,12 +200,7 @@ export default function SignupPage() {
               <p className="text-brand-dark/70">Sign up to start your fitness journey</p>
             </div>
 
-            <Link href="/" className="absolute top-4 left-4 flex items-center text-brand-green hover:text-green-700 transition-all duration-300 z-50">
-              <Button className="bg-brand-green hover:bg-green-700 shadow-lg hover:shadow-xl transition-all duration-300">
-                <ArrowLeft className="h-4 w-4" />
-                <span className="ml-2 hidden md:block">Back to Home</span>
-              </Button>
-            </Link>
+            <BackButton href="/" text="Back to Home" className="absolute top-4 left-4" />
 
             <Card className="w-full shadow-lg border-0">
               <CardHeader>
@@ -187,19 +210,25 @@ export default function SignupPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                {isLoading && <LoadingSpinner fullScreen text="Creating account..." />}
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {errors.general && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                      <p className="text-red-600 text-sm">{errors.general}</p>
+                    </div>
+                  )}
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="username">Username</Label>
                     <Input
-                      id="name"
-                      name="name"
+                      id="username"
+                      name="username"
                       type="text"
-                      placeholder="John Doe"
-                      value={formData.name}
+                      placeholder="johndoe"
+                      value={formData.username}
                       onChange={handleChange}
-                      className={`${errors.name ? "border-red-500" : ""} bg-white`}
+                      className={`${errors.username ? "border-red-500" : ""} bg-white`}
                     />
-                    {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                    {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
@@ -215,29 +244,68 @@ export default function SignupPage() {
                     {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="full_name">Full Name</Label>
                     <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={formData.password}
+                      id="full_name"
+                      name="full_name"
+                      type="text"
+                      placeholder="John Doe"
+                      value={formData.full_name}
                       onChange={handleChange}
-                      className={`${errors.password ? "border-red-500" : ""} bg-white`}
+                      className={`${errors.full_name ? "border-red-500" : ""} bg-white`}
                     />
+                    {errors.full_name && <p className="text-red-500 text-sm">{errors.full_name}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className={`${errors.password ? "border-red-500" : ""} bg-white`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5 text-gray-400" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-gray-400" />
+                        )}
+                      </button>
+                    </div>
                     {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      className={`${errors.confirmPassword ? "border-red-500" : ""} bg-white`}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        className={`${errors.confirmPassword ? "border-red-500" : ""} bg-white`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-5 w-5 text-gray-400" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-gray-400" />
+                        )}
+                      </button>
+                    </div>
                     {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
                   </div>
                   <div className="flex items-start space-x-2">
