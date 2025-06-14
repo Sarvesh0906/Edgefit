@@ -51,7 +51,7 @@ export default function LLMInteractionPage() {
 
     try {
       // Get LLM response
-      const llmResponse = await fetch('http://localhost:8000/bot/chat/', {
+      const llmResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bot/chat/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

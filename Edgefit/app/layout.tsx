@@ -11,6 +11,20 @@ export const metadata: Metadata = {
   title: "EdgeFit-AI - Your Personal Fitness Assistant",
   description: "Get personalized workout plans, nutrition advice, and fitness tracking with our AI-powered chatbot.",
   generator: "v0.dev",
+  icons: {
+    icon: [
+      {
+        url: '/favicon.svg',
+        type: 'image/svg+xml',
+      }
+    ],
+    apple: [
+      {
+        url: '/favicon.svg',
+        type: 'image/svg+xml',
+      }
+    ],
+  },
 }
 
 export default function RootLayout({

@@ -53,7 +53,7 @@ export default function ChatPage() {
             throw new Error("No authentication token found");
         }
 
-        const res = await fetch("http://localhost:8000/bot/chat/", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/bot/chat/`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
