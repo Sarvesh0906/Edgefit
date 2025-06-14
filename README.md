@@ -1,113 +1,162 @@
-# AI Fitness Assistant
+# EdgeFit - AI-Powered Fitness Platform
 
-A personalized AI-powered fitness platform that provides customized workout plans, nutrition advice, and fitness tracking tailored to your individual profile.
+EdgeFit is a cutting-edge fitness platform that combines artificial intelligence with personalized fitness tracking to help users achieve their health and wellness goals. The platform offers a comprehensive suite of features powered by advanced machine learning models and a modern tech stack.
 
-## Features
+## 🌟 Key Features
 
-- **Personalized Workout Plans**: AI-generated exercise routines based on your weight, height, age, and fitness goals
-- **Nutrition Advice**: Customized dietary recommendations and meal planning
-- **Fitness Tracking**: Monitor your progress and achievements
-- **AI-Powered Chatbot**: Get instant answers to your fitness and nutrition questions
-- **Responsive Design**: Seamless experience across desktop, tablet, and mobile devices
+- **AI-Powered Workout Recommendations**: Personalized exercise routines generated using machine learning models trained on extensive fitness data
+- **Smart Nutrition Planning**: Customized meal plans and dietary recommendations based on user profiles and goals
+- **Real-time Progress Tracking**: Advanced analytics and visualization of fitness metrics and achievements
+- **Intelligent Chatbot Assistant**: AI-driven chatbot for instant fitness and nutrition guidance
+- **User Authentication**: Secure login and profile management system
+- **Responsive Design**: Seamless experience across all devices with a modern, intuitive interface
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend**: React 18, TypeScript
-- **Styling**: Tailwind CSS with custom design system
-- **UI Components**: shadcn/ui
-- **Build Tool**: Vite
-- **Routing**: React Router
-- **State Management**: TanStack Query
-- **Icons**: Lucide React
+### Frontend
+- **Framework**: Next.js 15 with React 19
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS with custom animations
+- **UI Components**: 
+  - shadcn/ui components
+  - Radix UI primitives
+  - Custom components
+- **State Management**: React Hook Form with Zod validation
+- **Data Visualization**: Recharts
+- **Icons**: Lucide React & React Icons
+- **Notifications**: React Hot Toast & Sonner
 
-## Getting Started
+### Backend
+- **Framework**: FastAPI (Python)
+- **Database**: Custom database implementation
+- **Authentication**: JWT-based auth system
+- **AI Integration**: Custom LLM models for fitness recommendations
+- **API**: RESTful architecture with CORS support
+
+### Development Tools
+- **Build Tool**: Next.js
+- **Package Manager**: npm/yarn
+- **Linting**: ESLint
+- **Type Checking**: TypeScript
+- **Version Control**: Git
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js (v18 or higher)
+- Python 3.8+
 - npm or yarn
+- Git
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone <your-repository-url>
-cd ai-fitness-assistant
+git clone https://github.com/Sarvesh0906/Edgefit
+cd edgefit
 ```
 
-2. Install dependencies:
+2. Install frontend dependencies:
 ```bash
+cd Edgefit
 npm install
 ```
 
-3. Start the development server:
+3. Install backend dependencies:
 ```bash
+cd ../backend
+pip install -r requirements.txt
+```
+
+4. Set up environment variables:
+   - Create `.env` files in both frontend and backend directories
+   - Configure necessary API keys and database credentials
+
+5. Start the development servers:
+
+Frontend:
+```bash
+cd Edgefit
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
-
-## Project Structure
-
-```
-src/
-├── components/          # Reusable UI components
-│   ├── ui/             # shadcn/ui components
-│   └── ContactForm.tsx # Contact form component
-├── pages/              # Page components
-│   ├── Index.tsx       # Home page
-│   ├── Contact.tsx     # Contact page
-│   └── NotFound.tsx    # 404 page
-├── hooks/              # Custom React hooks
-├── lib/                # Utility functions
-└── App.tsx             # Main application component
+Backend:
+```bash
+cd backend
+python main.py
 ```
 
-## Design System
+6. Access the application:
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:8000
 
-The app uses a custom green-based color palette:
+## 📁 Project Structure
 
-- **Brand Green** (#04BF62): Primary buttons, headers
-- **Brand Accent** (#3EC381): Secondary elements, icons
-- **Brand Light** (#E6F0DC): Backgrounds, cards
-- **Brand Dark** (#1C2A18): Text, navigation
-- **Success** (#6EEA8E): Success states
-- **Warning** (#FF9900): Alerts, warnings
-- **Neutral Gray** (#D9E0E2): Borders, dividers
+```
+├── Edgefit/              # Frontend application
+│   ├── app/              # Next.js app directory
+│   ├── components/       # Reusable UI components
+│   ├── lib/              # Utility functions
+│   └── public/           # Static assets
+│
+├── backend/              # Backend application
+│   ├── main.py           # FastAPI application
+│   ├── auth.py           # Authentication logic
+│   ├── chatbot.py        # AI chatbot implementation
+│   ├── database.py       # Database operations
+│   ├── models.py         # Data models
+|   └── utils.py          # Utility Functions
+│
+└── data/                 # ML model training data
+    ├── dailyActivity_merged.csv
+    ├── data_cleaning.ipynb
+    └── llm_model.ipynb
+```
 
-## Available Scripts
+## 🎨 Design System
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
+The application uses a modern, accessible design system with:
+
+- **Color Palette**:
+  - Primary: #04BF62 (Brand Green)
+  - Secondary: #3EC381 (Brand Accent)
+  - Background: #E6F0DC (Brand Light)
+  - Text: #1C2A18 (Brand Dark)
+  - Accent: #6EEA8E (Success)
+  - Warning: #FF9900
+  - Neutral: #D9E0E2
+
+- **Typography**: Modern, readable font stack
+- **Components**: Consistent, accessible UI components
+- **Animations**: Smooth, performant transitions
+
+## 🔧 Available Scripts
+
+- `npm run dev` - Start frontend development server
+- `npm run build` - Build frontend for production
+- `npm run start` - Start production frontend server
 - `npm run lint` - Run ESLint
+- `python main.py` - Start backend server
 
-## Features in Development
-
-- User authentication and profiles
-- Workout plan generation based on user metrics
-- Nutrition tracking and meal planning
-- Progress analytics and reporting
-- Social features and community
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Contact
+## 📞 Contact
 
-For questions or support, please visit our [contact page](/contact) or reach out to:
-- Email: support@aifitness.com
-- Phone: +1 (555) 123-FLEX
+For support or inquiries:
+- Email: support@edgefit.com
+- Project Repository: [GitHub Repository URL]
 
 ---
 
-Built with ❤️ using React, TypeScript, and Tailwind CSS
+Built with ❤️ by the EdgeFit Team
