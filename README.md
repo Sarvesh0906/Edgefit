@@ -147,16 +147,6 @@ The application uses a modern, accessible design system with:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 📞 Contact
-
-For support or inquiries:
-- Email: support@edgefit.com
-- Project Repository: [GitHub Repository URL]
-
 ---
 
 Built with ❤️ by the EdgeFit Team
